@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - backend_net
+
+  backend:
+    build: .
+    ports:
+      - "{{ backend_port }}:{{ backend_port }}"
+    env_file: .env
+    depends_on:
+      - postgres
+    networks:
+      - backend_net
+
+networks:
+  backend_net:

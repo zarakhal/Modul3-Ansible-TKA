@@ -1,0 +1,43 @@
+---
+- name: Allow backend port on UFW
+  ufw:
+    rule: allow
+    port: "{{ backend_port }}"
+    proto: tcp
+
+- name: Create backend directory
+  file:
+    path: /opt/backend
+    state: directory
+
+- name: Copy source code backend
+  copy:
+    src: "../../../Resource Soal Modul 3/backend/"
+    dest: "/opt/backend/"
+
+- name: Copy Dockerfile
+  copy:
+    src: "Dockerfile"
+    dest: "/opt/backend/"
+
+- name: Template .env and docker-compose
+  template:
+    src: "{{ item }}.j2"
+    dest: "/opt/backend/{{ item }}"
+  loop:
+    - .env
+    - docker-compose.yml
+
+- name: Start docker-compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/backend
+    state: present
+
+- name: Health check backend
+  uri:
+    url: "http://localhost:{{ backend_port }}/"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 5
+  delay: 10

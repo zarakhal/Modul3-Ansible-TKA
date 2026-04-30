@@ -1,0 +1,5 @@
+db_name: "tka_db"
+db_username: "admin"
+db_password: "password123"
+backend_port: "3000"
+jwt_secret: "supersecret"

@@ -4,7 +4,7 @@ all:
     backend_group:
       hosts:
         node1:
-          ansible_host: 172.19.56.156
+          ansible_host: 10.14.226.79
           ansible_user: ubuntu
           ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
@@ -12,6 +12,6 @@ all:
     frontend_group:
       hosts:
         node2:
-          ansible_host: 172.19.56.6
+          ansible_host: 10.14.226.106
           ansible_user: ubuntu
           ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
