@@ -4,7 +4,13 @@
   become: yes
   roles:
     - docker_setup
-- hosts: backend
+- name: Deploy Backend ke group backend
+  hosts: backend
   become: yes
   roles:
     - backend
+- name: Deploy Frontend ke group frontend
+  hosts: frontend
+  become: yes
+  roles:
+    - role: frontend
