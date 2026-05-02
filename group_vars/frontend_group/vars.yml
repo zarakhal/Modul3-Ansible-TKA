@@ -1,0 +1,2 @@
+frontend_port: 8080
+backend_url: "http://{{ hostvars[groups['backend_group'][0]]['ansible_host'] }}:{{ hostvars[groups['backend_group'][0]]['backend_port'] }}"
