@@ -1,0 +1,59 @@
+---
+# tasks file for roles/frontend/tasks/main.yml
+
+- name: Buat direktori untuk frontend app
+  file:
+    path: /opt/frontend
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Copy Dockerfile ke node
+  copy:
+    src: Dockerfile
+    dest: /opt/frontend/Dockerfile
+    owner: ubuntu
+    mode: '0644'
+
+- name: Copy index.html ke node
+  copy:
+    src: "{{ playbook_dir }}/frontend/index.html"
+    dest: /opt/frontend/index.html
+    owner: ubuntu
+    mode: '0644'
+
+- name: Deploy config.js dari template Jinja2
+  template:
+    src: config.js.j2
+    dest: /opt/frontend/config.js
+    owner: ubuntu
+    mode: '0644'
+
+- name: Deploy docker-compose.yml dari template Jinja2
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/frontend/docker-compose.yml
+    owner: ubuntu
+    mode: '0644'
+
+- name: Buka port frontend di firewall (UFW)
+  ufw:
+    rule: allow
+    port: "{{ frontend_port }}"
+    proto: tcp
+
+- name: Jalankan Docker Compose untuk frontend
+  community.docker.docker_compose_v2:
+    project_src: /opt/frontend
+    state: present
+    build: true
+
+- name: Health check menggunakan URI
+  uri:
+    url: "http://localhost:{{ frontend_port }}"
+    status_code: 200
+  register: health_check
+  retries: 10
+  delay: 5
+  until: health_check.status == 200
